@@ -1,7 +1,15 @@
-export function addTodo(text) {
-  console.log(text);
+export const addTodo = todo => {
+  console.log("Na action addTodo: " + todo);
   return {
     type: "ADD_TODO",
-    text: text
+    todo
   };
-}
+};
+
+export const delTodo = id => {
+  console.log("Actions delTodo index: " + id);
+  return {
+    type: "DEL_TODO",
+    id
+  };
+};

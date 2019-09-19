@@ -1,53 +1,73 @@
 import React from "react";
-import { bindActionCreators } from "redux";
+//import { bindActionCreators } from "redux";
 import * as todoActions from "../actions/todos";
 import { connect } from "react-redux";
 
 class TodoList extends React.Component {
   constructor(props) {
     super(props);
-    console.log(props);
 
     this.state = {
-      newTodoText: ""
+      name: ""
     };
+
+    this.delTodo = this.delTodo.bind(this);
+    this.addTodo = this.addTodo.bind(this);
   }
 
-  addNewTodo = () => {
-    console.log("No addNewTodo: " + this.state.newTodoText);
+  addTodo = () => {
+    console.log("No TodoList addNewTodo: " + this.state.name);
+    let todo = {
+      name: this.state.name
+    };
+    this.props.addTodo(todo);
+    this.setState({ name: "" });
+  };
 
-    this.props.addTodo(this.state.newTodoText);
-    this.setState({ newTodoText: "" });
+  delTodo = (event, id) => {
+    event.preventDefault();
+    console.log("No TodoList delTodo text: " + id);
+    this.props.delTodo(id);
   };
 
   render() {
     return (
       <div>
         <ul>
-          {this.props.todos.map(todo => (
-            <li key={todo.id}>{todo.text}</li>
+          {this.props.todos.map((todo, index) => (
+            <li key={index}>
+              {todo.name} {" - "} {index}{" "}
+              <button onClick={e => this.delTodo(e, index)}>DEL</button>
+            </li>
           ))}
         </ul>
 
         <input
           type="text"
-          value={this.state.newTodoText}
-          onChange={e => this.setState({ newTodoText: e.target.value })}
+          value={this.state.name}
+          onChange={e => this.setState({ name: e.target.value })}
         />
-        <button onClick={this.addNewTodo}>Novo todo</button>
+
+        <button onClick={this.addTodo}>Novo todo</button>
       </div>
     );
   }
 }
 
-const mapStateoProps = state => ({
-  todos: state.todos
-});
+const mapStateToProps = state => {
+  return {
+    todos: state.todos
+  };
+};
 
-const mapDispatchToProps = dispatch =>
-  bindActionCreators(todoActions, dispatch);
+const mapDispatchToProps = dispatch => {
+  return {
+    addTodo: todo => dispatch(todoActions.addTodo(todo)),
+    delTodo: id => dispatch(todoActions.delTodo(id))
+  };
+};
 
 export default connect(
-  mapStateoProps,
+  mapStateToProps,
   mapDispatchToProps
 )(TodoList);
